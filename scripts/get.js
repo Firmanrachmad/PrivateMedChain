@@ -16,21 +16,18 @@ async function main() {
   // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
 
   const MedRec = await hre.ethers.getContractFactory("Medrec");
-  const mr = await MedRec.deploy();
+  const mr = await MedRec.attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
 
-  // await lock.deployed();
-  await mr.deployed();
+  const pemilik = await mr.getPemilik()
+  const textRaw = await mr.textRaw()
 
-  // console.log(
-  //   `Lock with ${ethers.utils.formatEther(
-  //     lockedAmount
-  //   )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  // );
   console.log(
     `Lock with ${ethers.utils.formatEther(
       lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${mr.address}`
+    )}ETH and unlock timestamp ${unlockTime} deployed to ${pemilik}`
   );
+
+  console.log(`text = ${textRaw}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
