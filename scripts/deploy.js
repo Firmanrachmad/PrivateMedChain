@@ -16,7 +16,7 @@ async function main() {
   // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
 
   const MedRec = await hre.ethers.getContractFactory("Medrec");
-  const mr = await MedRec.deploy();
+  const mr = await MedRec.deploy("Hello World!");
 
   // await lock.deployed();
   await mr.deployed();
