@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { ethers } from 'ethers';
 import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
 import '../App.css';
+import Navbar from "../components/navbar"
 
 const textAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
-function Home(){
+function Home (){
 
     const [message, setMessage] = useState("");
     const [currentText, setCurrentText] = useState("");
@@ -54,7 +55,8 @@ function Home(){
     }
 
     return (
-        <div className="App-header">
+        <div>
+            <h2>Testing Page</h2>
             <div>
                 <input 
                 onChange={(e) => setMessage(e.target.value)}
