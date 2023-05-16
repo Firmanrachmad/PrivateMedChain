@@ -1,7 +1,4 @@
 import '../App.css';
-import Home from '../pages/home'
-import Upload from '../pages/upload'
-import {BrowserRouter as Router, Routes, Route, BrowserRouter} from "react-router-dom";
 
 function Navbar(){
     return (
@@ -9,9 +6,9 @@ function Navbar(){
                 <ul>
                     <li><a href="/">Home</a></li>
                     <li><a href="/upload">Upload File</a></li>
+                    <li><a href="/transactions">View Transactions</a></li>
                 </ul>
             </div>
-        
     )
 
 }

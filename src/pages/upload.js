@@ -1,6 +1,9 @@
 function Upload () {
     return (
-        <h2>This is upload page</h2>
+        <div className="App">
+            <h2>Upload Page</h2>
+        </div>
+        
     )
 }
 
