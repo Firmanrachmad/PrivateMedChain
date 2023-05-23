@@ -69,6 +69,7 @@ function Home (){
                 <button onClick={getText} className='get-button'>Get</button>
             </div>
             <h2 className='teks'>{currentText}</h2>
+            <h2 className='teks'>Pemilik: {textAddress}</h2>
         </div>
     );
 
