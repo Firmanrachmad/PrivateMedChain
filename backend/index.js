@@ -1,28 +1,14 @@
 // To connect with your mongoDB database
 const mongoose = require('mongoose');
+const UserSchema = require('./model/user');
+
 mongoose.connect('mongodb://localhost:27017/', {
-	dbName: 'medrec',
+	dbName: 'testnet',
 	useNewUrlParser: true,
 	useUnifiedTopology: true
 }, err => err ? console.log(err) :
-	console.log('Connected to medrec database'));
+	console.log('Connected to MongoDB database'));
 
-// Schema for users of app
-const UserSchema = new mongoose.Schema({
-	name: {
-		type: String,
-		required: true,
-	},
-	email: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	date: {
-		type: Date,
-		default: Date.now,
-	},
-});
 const User = mongoose.model('users', UserSchema);
 User.createIndexes();
 
@@ -60,4 +46,13 @@ app.post("/register", async (req, resp) => {
 		resp.send("Something Went Wrong");
 	}
 });
+
+app.get("/view", async (req, resp) => {
+	try {
+
+	} catch (e) {
+		resp.send("Something Went Wrong");
+	}
+});
+
 app.listen(5000);
