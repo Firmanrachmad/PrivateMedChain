@@ -1,6 +1,7 @@
 // To connect with your mongoDB database
 const mongoose = require('mongoose');
 const UserSchema = require('./model/user');
+const ImageSchema = require('./model/image');
 
 mongoose.connect('mongodb://localhost:27017/', {
 	dbName: 'testnet',
@@ -11,6 +12,8 @@ mongoose.connect('mongodb://localhost:27017/', {
 
 const User = mongoose.model('users', UserSchema);
 User.createIndexes();
+const Image = mongoose.model('images', ImageSchema);
+Image.createIndexes();
 
 // For backend and express
 const express = require('express');
@@ -47,8 +50,22 @@ app.post("/register", async (req, resp) => {
 	}
 });
 
-app.get("/view", async (req, resp) => {
+app.post("/upload-image", async (req, resp) => {
+	const {base64} = req.body;
 	try {
+		await Image.create({image:base64});
+		resp.send({ status: "ok" });
+
+	} catch (e) {
+		resp.send("Something Went Wrong");
+	}
+});
+
+app.get("/get-image", async (req, resp) => {
+	try {
+		await Image.find({}).then(data => {
+			resp.send({ status: "ok", data: data})
+		})
 
 	} catch (e) {
 		resp.send("Something Went Wrong");
