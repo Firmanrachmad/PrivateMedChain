@@ -56,7 +56,7 @@ function Home (){
 
     return (
         <div className="App">
-            <h2>Testing Page</h2>
+            <h2>Smart Contract Testing Page</h2>
             <div>
                 <input 
                 onChange={(e) => setMessage(e.target.value)}
