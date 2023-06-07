@@ -5,6 +5,10 @@ const ImageSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	key: {
+		type: String,
+		required: true,
+	}
 });
 
 module.exports = ImageSchema;

@@ -19,15 +19,13 @@ function Transactions () {
 
     return (
         <div className="App">
-            <h2>Transactions Page</h2>
+            <h2>All Documents</h2>
             {allImage.map(data=>{
                 return (
-                    <img width={100} height={100} src={data.allImage}/>
+                    <img width={100} height={100} src={data.image}/>
                 )
             })}
         </div>
-        
-
     )
 }
 

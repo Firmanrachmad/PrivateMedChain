@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -7,8 +8,13 @@ module.exports = {
     artifacts: './src/artifacts',
   },
   networks: {
-    hardhat: {
-      chainId: 1337,
+    ganache: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
     },
+    // hardhat: {
+    //   chainId: 1337,
+    // },
+
   }
 };

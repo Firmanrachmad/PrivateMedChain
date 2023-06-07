@@ -9,7 +9,9 @@ function Testing (){
         let result = await fetch(
         'http://localhost:5000/register', {
             method: "post",
-            body: JSON.stringify({ name, email }),
+            body: JSON.stringify({ 
+                name, email 
+            }),
             headers: {
                 'Content-Type': 'application/json'
             }
