@@ -4,7 +4,7 @@ import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
 import '../App.css';
 import Navbar from "../components/navbar"
 
-const textAddress = "0x5eDba53b81c969979D789e53faEc426E1e58aC83";
+const textAddress = "0x9192b930766A8151aE36bee3E656C8514b40617d";
 
 function Home (){
 

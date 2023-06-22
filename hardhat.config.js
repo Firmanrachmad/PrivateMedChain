@@ -8,7 +8,7 @@ module.exports = {
     artifacts: './src/artifacts',
   },
   networks: {
-    ganache: {
+    localganache: {
       url: process.env.PROVIDER_URL,
       accounts: [`0x${process.env.PRIVATE_KEY}`]
     },
