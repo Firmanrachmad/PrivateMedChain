@@ -1,93 +1,86 @@
-import React, { useState } from "react";
-import axios from 'axios';
+import React, { useState, useEffect, useRef } from "react";
+import "../App.css";
+import axios from "axios";
 
-function Upload() {
-  const [image, setImage] = useState("");
-  const [document, setDocument] = useState("");
-  const [key, setKey] = useState("");
+const Upload = () => {
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
+  const [name, setName] = useState("");
 
-  function converttoBase64(e) {
-    console.log(e);
-    var reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
-    reader.onload = () => {
-      console.log(reader.result);
-      setImage(reader.result);
-    };
-    reader.onerror = (error) => {
-      console.log("Error: ", error);
-    };
-  }
+  const getDocuments = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("http://localhost:5000/backend/v1/documents");
+      setDocuments(res.data.documents);
+      setLoading(false);
+      console.log(res.data.documents);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  function uploadImage() {
-    fetch("http://localhost:5000/upload-image", {
-      method: "POST",
-      crossDomain: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        base64: image,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }
+  const addDocuments = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("file", fileInputRef.current.files[0]);
+      const res = await axios.post(
+        "http://localhost:5000/backend/v1/documents",
+        formData
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  function handleFileUpload(event) {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('pdf', file);
-  
-    axios.post('http://localhost:5000/upload-pdf', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then(response => {
-        console.log('Upload success:', response.data);
-        // Lakukan sesuatu setelah file berhasil di-upload
-      })
-      .catch(error => {
-        console.error('Upload error:', error);
-        // Lakukan sesuatu jika terjadi error saat upload
-      });
-  }
-  
+  const downloadFile = async (id) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/backend/v1/documents/download/${id}`,
+        { responseType: "blob" }
+      );
+      const blob = new Blob([res.data], { type: res.data.type });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "file";
+      // link.download = res.headers["content-disposition"].split("filename=")[1];
+      link.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  useEffect(() => {
+    getDocuments();
+  }, []);
 
   return (
-    <div className="App">
-        <div className="row">
-            <form>
-            <h2>Upload Image</h2>
-            <div className="form-group">
-                <input accept="image/*" type="file" onChange={converttoBase64} />
-                <br></br>
-                {image == "" || image == null ? (
-                ""
-                ) : (
-                <img width={100} height={100} src={image} />
-                )}
+    <div>
+      <div className="addDocuments">
+        <input
+          type="text"
+          placeholder="add name"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input type="file" ref={fileInputRef} />
+        <button onClick={addDocuments}>Add</button>
+      </div>
+      <div className="documents">
+        {documents &&
+          documents.map((document) => (
+            <div className="document" key={document._id}>
+              <h3>{document.name}</h3>
+              <button onClick={() => downloadFile(document._id)}>
+                Download File
+              </button>
             </div>
-            <div className="form-group">
-                <button onClick={uploadImage}>Upload</button>
-            </div>
-            </form>
-        </div>
-        <div className="row">
-            <form>
-            <h2>Upload PDF</h2>
-            <div className="form-group">
-                <input accept=".pdf" type="file" onChange={handleFileUpload} />
-            </div>
-            {/* <div className="form-group">
-                <button onClick={uploadImage}>Upload</button>
-            </div> */}
-            </form>
-        </div>
+          ))}
+      </div>
     </div>
   );
-}
+};
 
 export default Upload;

@@ -11,6 +11,10 @@ const documentSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a file"],
     },
+    encryptedText: {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
         default: Date.now,
