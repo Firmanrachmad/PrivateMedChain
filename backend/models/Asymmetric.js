@@ -1,13 +1,21 @@
 const mongoose = require("mongoose");
 
 const asymmetricSchema = new mongoose.Schema({
-    publickey: {
+    documentId: {
         type: String,
         required: true,
     },
-    privatekey: {
+    encryptedId: {
         type: String,
         required: true,
+    },
+    decryptedId: {
+        type: String,
+        required: true,
+    },
+    date: {
+        type: Date,
+        default: Date.now,
     },
 });
 

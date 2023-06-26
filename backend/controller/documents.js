@@ -1,5 +1,5 @@
 const Document = require("../models/Documents");
-const Keys = require("../models/Asymmetric");
+const Asymmetric = require("../models/Asymmetric");
 const path = require("path");
 const asyncWrapper = require("../middleware/asyncWrapper");
 const crypto = require("crypto");
@@ -24,7 +24,37 @@ function encryptText(plainText) {
 
   const encryptedText = encryptedBuffer.toString('base64');
   return encryptedText;
-}
+};
+
+function decryptText(encryptedText) {
+  const privateKeyPEM = privateKey.export({
+    format: 'pem',
+    type: 'pkcs1',
+  });
+
+  const encryptedBuffer = Buffer.from(encryptedText, 'base64');
+
+  const decryptedBuffer = crypto.privateDecrypt(
+    {
+      key: privateKeyPEM,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: 'sha256',
+    },
+    encryptedBuffer
+  );
+
+  const decryptedText = decryptedBuffer.toString();
+  return decryptedText;
+};
+
+const encryptId = asyncWrapper(async (req, res) => {
+  const { id } = req.params;
+  const documentId = id;
+  const encryptedId = encryptText(documentId);
+  const decryptedId = decryptText(encryptedId);
+  const asymmetric = await Asymmetric.create({ documentId, encryptedId, decryptedId });
+  res.status(201).json({ asymmetric });
+});
 
 const getDocuments = async (req, res) => {
   try {
@@ -38,11 +68,8 @@ const getDocuments = async (req, res) => {
 const addDocuments = asyncWrapper(async (req, res) => {
   const { name } = req.body;
   const file = req.file.path;
-  // const plainText = "simple text";
   const { id } = req.params;
-  const stringid = id.toString();
-  const encryptedText = encryptText(stringid);
-  const document = await Document.create({ name, file, encryptedText });
+  const document = await Document.create({ name, file });
   res.status(201).json({ document });
 });
 
@@ -57,4 +84,4 @@ const downloadFile = asyncWrapper(async (req, res) => {
   res.download(filePath);
 });
 
-module.exports = { getDocuments, addDocuments, downloadFile };
+module.exports = { encryptId, getDocuments, addDocuments, downloadFile };

@@ -31,6 +31,8 @@ const Upload = () => {
         formData
       );
       console.log(res);
+      const documentId = res.data.document._id;
+      encryptFile(documentId);
     } catch (error) {
       console.log(error);
     }
@@ -48,6 +50,17 @@ const Upload = () => {
       link.download = "file";
       // link.download = res.headers["content-disposition"].split("filename=")[1];
       link.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const encryptFile = async (id) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:5000/backend/v1/documents/encrypt/${id}`
+      );
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
