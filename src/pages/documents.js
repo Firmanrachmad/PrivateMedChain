@@ -6,7 +6,7 @@ import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
 
 const textAddress = "0x1e5b4c061f9D6EE96f491955F719293599412bE1";
 
-function Transactions() {
+function Documents() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -94,4 +94,4 @@ function Transactions() {
   );
 }
 
-export default Transactions;
+export default Documents;

@@ -1,9 +1,10 @@
 import logo from './logo.svg';
 import Home from './pages/home'
 import Upload from './pages/upload'
-import Transactions from './pages/transactions'
+import Documents from './pages/documents'
 import Navbar from "./components/navbar"
-import Testing from './pages/testing'
+import Pasien from './pages/pasien'
+import Tenaga from './pages/tenaga'
 import {Routes, Route} from "react-router-dom";
 
 function App() {
@@ -12,8 +13,9 @@ function App() {
   <Routes>
     <Route path="/" element={<Home />}/>
     <Route path="/upload" element={<Upload />}/>
-    <Route path="/transactions" element={<Transactions />}/>
-    <Route path="/test" element={<Testing />}/>
+    <Route path="/documents" element={<Documents />}/>
+    <Route path="/pasien" element={<Pasien />}/>
+    <Route path="/tenaga" element={<Tenaga />}/>
   </Routes>
   </>
 

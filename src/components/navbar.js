@@ -5,9 +5,10 @@ function Navbar(){
             <div>
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/test">Test MongoDB</a></li>
-                    <li><a href="/upload">Upload File to MongoDB</a></li>
-                    <li><a href="/transactions">All Documents</a></li>
+                    <li><a href="/pasien">Pasien</a></li>
+                    <li><a href="/tenaga">Tenaga Kesehatan</a></li>
+                    <li><a href="/upload">Upload File</a></li>
+                    <li><a href="/documents">All Documents</a></li>
                 </ul>
             </div>
     )
