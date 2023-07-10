@@ -1,5 +1,6 @@
 const asyncWrapper = require("../middleware/asyncWrapper");
 const User = require("../models/Users");
+const {generateToken} = require("../utils/generateToken");
 
 const authUser = asyncWrapper(async (req, res) => {
     
@@ -23,6 +24,7 @@ const registerUser = asyncWrapper(async (req,res) => {
     });
 
     if (user) {
+        generateToken(res, user._id);
         res.status(201).json({
             _id: user._id,
             name: user.name,
