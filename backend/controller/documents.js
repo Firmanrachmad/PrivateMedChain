@@ -1,18 +1,11 @@
 const Document = require("../models/Documents");
 const Asymmetric = require("../models/Asymmetric");
+const Keys = require("../models/Keys");
 const path = require("path");
 const asyncWrapper = require("../middleware/asyncWrapper");
 const crypto = require("crypto");
-const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
-  modulusLength: 2048,
-});
 
-function encryptText(plainText) {
-  const publicKeyPEM = publicKey.export({
-    format: "pem",
-    type: "pkcs1",
-  });
-
+function encryptText(plainText, publicKeyPEM) {
   const encryptedBuffer = crypto.publicEncrypt(
     {
       key: publicKeyPEM,
@@ -26,12 +19,7 @@ function encryptText(plainText) {
   return encryptedText;
 }
 
-function decryptText(encryptedText) {
-  const privateKeyPEM = privateKey.export({
-    format: "pem",
-    type: "pkcs1",
-  });
-
+function decryptText(encryptedText, privateKeyPEM) {
   const encryptedBuffer = Buffer.from(encryptedText, "base64");
 
   const decryptedBuffer = crypto.privateDecrypt(
@@ -48,22 +36,21 @@ function decryptText(encryptedText) {
 }
 
 const encryptId = asyncWrapper(async (req, res) => {
+  const key = await Keys.findOne();
+  const publicKeyPEMs = key.publicKeys;
   const { id } = req.params;
   const documentId = id;
-  const encryptedId = encryptText(documentId);
-  const decryptedId = decryptText(encryptedId);
-  const asymmetric = await Asymmetric.create({
-    documentId,
-    encryptedId,
-    decryptedId,
-  });
+  const encryptedId = encryptText(documentId, publicKeyPEMs);
+  const asymmetric = await Asymmetric.create({ encryptedId });
   res.status(201).json({ asymmetric });
 });
 
 const decryptId = asyncWrapper(async (req, res) => {
   const { id } = req.params;
+  const key = await Keys.findOne();
+  const privateKeyPEMs = key.privateKeys;
   const encryptedId = decodeURIComponent(id);
-  const decryptedId = decryptText(encryptedId);
+  const decryptedId = decryptText(encryptedId, privateKeyPEMs);
   res.status(200).json({ decryptedId });
 });
 

@@ -1,15 +1,7 @@
 const mongoose = require("mongoose");
 
 const asymmetricSchema = new mongoose.Schema({
-    documentId: {
-        type: String,
-        required: true,
-    },
     encryptedId: {
-        type: String,
-        required: true,
-    },
-    decryptedId: {
         type: String,
         required: true,
     },
