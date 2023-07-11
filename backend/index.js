@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./db/connect");
 const documentRouter = require("./routes/documents");
 const userRouter = require("./routes/users");
+const CookieParser = require("cookie-parser");
 
 const app = express();
 const dotenv = require("dotenv").config();
@@ -12,6 +13,7 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(CookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello World");

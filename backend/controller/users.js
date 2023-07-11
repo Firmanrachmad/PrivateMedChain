@@ -1,6 +1,6 @@
 const asyncWrapper = require("../middleware/asyncWrapper");
 const User = require("../models/Users");
-const {generateToken} = require("../utils/generateToken");
+const { generateToken } = require("../utils/generateToken");
 
 const authUser = asyncWrapper(async (req, res) => {
     const { email, password } = req.body;
@@ -12,7 +12,8 @@ const authUser = asyncWrapper(async (req, res) => {
         res.status(201).json({
             _id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            roles: user.roles
         });
     } else {
         res.status(400);
@@ -22,7 +23,7 @@ const authUser = asyncWrapper(async (req, res) => {
 });
 
 const registerUser = asyncWrapper(async (req,res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, roles } = req.body;
 
     const userExists = await User.findOne({ email });
 
@@ -34,7 +35,8 @@ const registerUser = asyncWrapper(async (req,res) => {
     const user = await User.create({
         name,
         email,
-        password
+        password,
+        roles
     });
 
     if (user) {
@@ -42,7 +44,8 @@ const registerUser = asyncWrapper(async (req,res) => {
         res.status(201).json({
             _id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            roles: user.roles
         });
     } else {
         res.status(400);
@@ -59,11 +62,36 @@ const logoutUser = asyncWrapper(async(req, res) => {
 });
 
 const getUserProfile = asyncWrapper(async(req, res) => {
-    res.status(200).json({message: 'Get User Profiel'});
+    const user = {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        roles: req.user.roles
+    }
+    res.status(200).json({ user });
 });
 
 const updateUserProfile = asyncWrapper(async(req, res) => {
-    res.status(200).json({message: 'Update User'});
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
+        const updatedUser = await user.save();
+        res.status(200).json({ 
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email
+         });
+    } else { 
+        res.status(404);
+        throw new Error('User not found');
+    }
+    // res.status(200).json({message: 'Update User'});
 });
 
 module.exports = {
