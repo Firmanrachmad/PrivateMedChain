@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../App.css";
 import axios from "axios";
+import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
 
 const Upload = () => {
   const [documents, setDocuments] = useState([]);
@@ -72,6 +73,35 @@ const Upload = () => {
 
   return (
     <div>
+      <Row className="justify-content-md-center mt-5">
+        <Col xs={12} md={6} className="card p-5">
+          <h1 className="text-center mb-4">Upload File</h1>
+
+          <Form onSubmit={addDocuments}>
+            <Form.Group className="my-2" controlId="email">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter name"
+                onChange={(e) => setName(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group className="my-2" controlId="email">
+              <Form.Label>File</Form.Label>
+              <Form.Control
+                type="file"
+                placeholder="Choose File"
+                ref={fileInputRef}
+              ></Form.Control>
+            </Form.Group>
+
+            <Button type="submit" variant="primary" className="mt-3">
+              Submit
+            </Button>
+          </Form>
+        </Col>
+      </Row>
       <div className="addDocuments">
         <input
           type="text"
@@ -79,7 +109,9 @@ const Upload = () => {
           onChange={(e) => setName(e.target.value)}
         />
         <input type="file" ref={fileInputRef} />
-        <button onClick={addDocuments}>Add</button>
+        <Button variant="primary" onClick={addDocuments}>
+          Add
+        </Button>
       </div>
       <div className="documents">
         {documents &&

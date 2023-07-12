@@ -1,19 +1,21 @@
-import { React } from "react";
-import "../App.css";
+import React from "react";
 import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
 
-function Tenaga() {
+const Login = () => {
   return (
+    // <div className=' py-5'>
+    //   <Container className='d-flex justify-content-center'>
+    //   </Container>
+    // </div>
     <Row className="justify-content-md-center mt-5">
       <Col xs={12} md={6} className="card p-5">
-        <h1 className="text-center mb-4">Add New Tenaga Kesehatan</h1>
+        <h1 className="text-center mb-4">Private MedChain</h1>
+        <p className="text-center mb-4">
+          Electronic Medical Records (EMR) using Private Blockchain Ethereum
+        </p>
+        <h2 className="text-center mb-4">Sign In</h2>
 
         <Form>
-          <Form.Group className="my-2" controlId="email">
-            <Form.Label>Name</Form.Label>
-            <Form.Control type="email" placeholder="Enter name"></Form.Control>
-          </Form.Group>
-
           <Form.Group className="my-2" controlId="email">
             <Form.Label>Email Address</Form.Label>
             <Form.Control type="email" placeholder="Enter email"></Form.Control>
@@ -28,12 +30,12 @@ function Tenaga() {
           </Form.Group>
 
           <Button type="submit" variant="primary" className="mt-3">
-            Submit
+            Sign In
           </Button>
         </Form>
       </Col>
     </Row>
   );
-}
+};
 
-export default Tenaga;
+export default Login;

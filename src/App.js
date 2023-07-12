@@ -5,6 +5,7 @@ import Documents from './pages/documents'
 import Navbar from "./components/navbar"
 import Pasien from './pages/pasien'
 import Tenaga from './pages/tenaga'
+import Login from './pages/login'
 import {Routes, Route} from "react-router-dom";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
   <Navbar/>
   <Routes>
     <Route path="/" element={<Home />}/>
+    <Route path="/login" element={<Login />}/>
     <Route path="/upload" element={<Upload />}/>
     <Route path="/documents" element={<Documents />}/>
     <Route path="/pasien" element={<Pasien />}/>
