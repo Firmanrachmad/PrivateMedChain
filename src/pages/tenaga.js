@@ -27,7 +27,15 @@ function Tenaga() {
             ></Form.Control>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="mt-3">
+          <Form.Group className="my-2" controlId="password">
+            <Form.Label>Ethereum Address</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter Ethereum Address"
+            ></Form.Control>
+          </Form.Group>
+
+          <Button type="submit" variant="success" className="mt-3">
             Submit
           </Button>
         </Form>

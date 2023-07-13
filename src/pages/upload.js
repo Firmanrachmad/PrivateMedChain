@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../App.css";
 import axios from "axios";
-import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
+import { Card, Button, Row, Col, Form } from "react-bootstrap";
+
+import { FileTextFill } from "react-bootstrap-icons";
 
 const Upload = () => {
   const [documents, setDocuments] = useState([]);
@@ -75,15 +77,15 @@ const Upload = () => {
 
   return (
     <div>
-      <Row className="justify-content-md-center mt-5">
+      <Row className="justify-content-md-center mt-5 mt-md-3">
         <Col xs={12} md={6} className="card p-5">
-          <h1 className="text-center mb-4">Upload File</h1>
+          <h1 className="text-center mb-4">Add New Record</h1>
           <Form>
             <Form.Group controlId="name">
-              <Form.Label>Name</Form.Label>
+              <Form.Label>Patient's Name</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="add name"
+                placeholder="Add Patient's Name"
                 onChange={(e) => setName(e.target.value)}
               />
             </Form.Group>
@@ -93,7 +95,7 @@ const Upload = () => {
             </Form.Group>
             <Button
               type="submit"
-              variant="primary"
+              variant="success"
               onClick={addDocuments}
               className="mt-3"
             >
@@ -102,25 +104,30 @@ const Upload = () => {
           </Form>
         </Col>
       </Row>
-      {documents &&
-        documents.map((document) => (
-          <div class="col-md-4">
-            <div class="card mb-3">
-              <div class="card-body">
-                <h5 class="card-title">Patient Records</h5>
-                <p class="card-text">{document.name}</p>
-                <Button
-                  variant="primary"
-                  onClick={() => downloadFile(document._id)}
-                  className="mt-3"
-                >
-                  Download
-                </Button>
-                <a href="#" class="card-link"></a>
-              </div>
-            </div>
-          </div>
-        ))}
+      <Row className="documents justify-content-md-center mt-3">
+        {documents &&
+          documents.map((document) => (
+            <Col md={4} className="document mb-3" key={document._id}>
+              <Card>
+                <Card.Body>
+                  <div className="d-flex align-items-center mb-3">
+                    <FileTextFill className="me-2" size={18} />
+                    <Card.Title>Patient's Record</Card.Title>
+                  </div>
+                  <Card.Text>{document.name}</Card.Text>
+                  <Button
+                    variant="success"
+                    onClick={() => downloadFile(document._id)}
+                    className="mt-3"
+                  >
+                    Download
+                  </Button>
+                  <Card.Link href="#" />
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+      </Row>
     </div>
   );
 };

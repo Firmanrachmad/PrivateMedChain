@@ -3,7 +3,9 @@ import "../App.css";
 import axios from "axios";
 import { ethers } from "ethers";
 import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
-import { Button } from "react-bootstrap";
+import { Card, Button, Row, Col, Form } from "react-bootstrap";
+
+import { FileTextFill } from "react-bootstrap-icons";
 
 const textAddress = "0x1e5b4c061f9D6EE96f491955F719293599412bE1";
 
@@ -53,54 +55,57 @@ function Documents() {
 
   const downloadFile = async (id) => {
     // if (typeof window.ethereum !== "undefined") {
-      // await requestAccount();
+    // await requestAccount();
 
-      // const provider = new ethers.providers.Web3Provider(window.ethereum);
-      // const signer = provider.getSigner();
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const signer = provider.getSigner();
 
-      // const contract = new ethers.Contract(textAddress, MedRec.abi, signer);
+    // const contract = new ethers.Contract(textAddress, MedRec.abi, signer);
 
-      try {
-        console.log(id);
-        const res = await axios.get(
-          `http://localhost:5000/backend/v1/documents/download/${id}`,
-          { responseType: "blob" }
-        );
-        const blob = new Blob([res.data], { type: res.data.type });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "file";
-        // link.download = res.headers["content-disposition"].split("filename=")[1];
-        link.click();
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      console.log(id);
+      const res = await axios.get(
+        `http://localhost:5000/backend/v1/documents/download/${id}`,
+        { responseType: "blob" }
+      );
+      const blob = new Blob([res.data], { type: res.data.type });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "file";
+      // link.download = res.headers["content-disposition"].split("filename=")[1];
+      link.click();
+    } catch (error) {
+      console.log(error);
+    }
     // }
   };
 
   return (
     <div>
-      <div className="documents">
-      {documents &&
-        documents.map((document) => (
-          <div class="col-md-4">
-            <div class="card mb-3">
-              <div className="document" key={document._id} class="card-body">
-                <h5 class="card-title">Patient Records</h5>
-                <p class="card-text"></p>
-                <Button
-                  variant="primary"
-                  onClick={() => decryptFile(document.encryptedId)}
-                  className="mt-3"
-                >
-                  Download
-                </Button>
-                <a href="#" class="card-link"></a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Row className="documents justify-content-md-center mt-3">
+        {documents &&
+          documents.map((document) => (
+            <Col md={4} className="mb-3" key={document._id}>
+              <Card className="document">
+                <Card.Body>
+                  <div className="d-flex align-items-center mb-3">
+                    <FileTextFill className="me-2" size={18} />
+                    <Card.Title>Patient's Record</Card.Title>
+                  </div>
+                  <Card.Text>{document.date}</Card.Text>
+                  <Button
+                    variant="success"
+                    onClick={() => decryptFile(document.encryptedId)}
+                    className="mt-3"
+                  >
+                    Download
+                  </Button>
+                  <Card.Link href="#" />
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+      </Row>
     </div>
   );
 }

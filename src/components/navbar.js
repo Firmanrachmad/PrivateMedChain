@@ -12,11 +12,13 @@ function Navbarz() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="/login">Login</Nav.Link>
               <Nav.Link href="/pasien">Pasien</Nav.Link>
               <Nav.Link href="/tenaga">Tenaga</Nav.Link>
               <Nav.Link href="/upload">Upload</Nav.Link>
               <Nav.Link href="/documents">Documents</Nav.Link>
+            </Nav>
+            <Nav className="ms-auto">
+              <Nav.Link href="/login">Login</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
