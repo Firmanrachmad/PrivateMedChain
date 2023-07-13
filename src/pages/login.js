@@ -9,7 +9,7 @@ const Login = () => {
     // </div>
     <Row className="justify-content-md-center mt-5">
       <Col xs={12} md={6} className="card p-5">
-        <h1 className="text-center mb-4">Private MedChain</h1>
+        <h1 className="text-center mb-4">Private EMR</h1>
         <p className="text-center mb-4">
           Electronic Medical Records (EMR) using Private Blockchain Ethereum
         </p>

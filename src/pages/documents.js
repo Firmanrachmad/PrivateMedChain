@@ -3,6 +3,7 @@ import "../App.css";
 import axios from "axios";
 import { ethers } from "ethers";
 import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
+import { Button } from "react-bootstrap";
 
 const textAddress = "0x1e5b4c061f9D6EE96f491955F719293599412bE1";
 
@@ -80,15 +81,25 @@ function Documents() {
   return (
     <div>
       <div className="documents">
-        {documents &&
-          documents.map((document) => (
-            <div className="document" key={document._id}>
-              <h3>{document.encryptedId}</h3>
-              <button onClick={() => decryptFile(document.encryptedId)}>
-                Download File
-              </button>
+      {documents &&
+        documents.map((document) => (
+          <div class="col-md-4">
+            <div class="card mb-3">
+              <div className="document" key={document._id} class="card-body">
+                <h5 class="card-title">Patient Records</h5>
+                <p class="card-text"></p>
+                <Button
+                  variant="primary"
+                  onClick={() => decryptFile(document.encryptedId)}
+                  className="mt-3"
+                >
+                  Download
+                </Button>
+                <a href="#" class="card-link"></a>
+              </div>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     </div>
   );

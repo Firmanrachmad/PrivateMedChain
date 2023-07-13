@@ -8,6 +8,7 @@ const Upload = () => {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
   const [name, setName] = useState("");
+  const [fileName, setfileName] = useState("");
 
   const getDocuments = async () => {
     setLoading(true);
@@ -34,6 +35,7 @@ const Upload = () => {
       console.log(res);
       const documentId = res.data.document._id;
       encryptFile(documentId);
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -76,54 +78,49 @@ const Upload = () => {
       <Row className="justify-content-md-center mt-5">
         <Col xs={12} md={6} className="card p-5">
           <h1 className="text-center mb-4">Upload File</h1>
-
-          <Form onSubmit={addDocuments}>
-            <Form.Group className="my-2" controlId="email">
+          <Form>
+            <Form.Group controlId="name">
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter name"
+                placeholder="add name"
                 onChange={(e) => setName(e.target.value)}
-              ></Form.Control>
+              />
             </Form.Group>
-
-            <Form.Group className="my-2" controlId="email">
+            <Form.Group controlId="file">
               <Form.Label>File</Form.Label>
-              <Form.Control
-                type="file"
-                placeholder="Choose File"
-                ref={fileInputRef}
-              ></Form.Control>
+              <Form.Control type="file" ref={fileInputRef} />
             </Form.Group>
-
-            <Button type="submit" variant="primary" className="mt-3">
-              Submit
+            <Button
+              type="submit"
+              variant="primary"
+              onClick={addDocuments}
+              className="mt-3"
+            >
+              Add
             </Button>
           </Form>
         </Col>
       </Row>
-      <div className="addDocuments">
-        <input
-          type="text"
-          placeholder="add name"
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input type="file" ref={fileInputRef} />
-        <Button variant="primary" onClick={addDocuments}>
-          Add
-        </Button>
-      </div>
-      <div className="documents">
-        {documents &&
-          documents.map((document) => (
-            <div className="document" key={document._id}>
-              <h3>{document.name}</h3>
-              <button onClick={() => downloadFile(document._id)}>
-                Download File
-              </button>
+      {documents &&
+        documents.map((document) => (
+          <div class="col-md-4">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">Patient Records</h5>
+                <p class="card-text">{document.name}</p>
+                <Button
+                  variant="primary"
+                  onClick={() => downloadFile(document._id)}
+                  className="mt-3"
+                >
+                  Download
+                </Button>
+                <a href="#" class="card-link"></a>
+              </div>
             </div>
-          ))}
-      </div>
+          </div>
+        ))}
     </div>
   );
 };
