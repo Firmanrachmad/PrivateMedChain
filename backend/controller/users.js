@@ -13,7 +13,8 @@ const authUser = asyncWrapper(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            roles: user.roles
+            roles: user.roles,
+            ethadress: user.ethaddress
         });
     } else {
         res.status(400);
@@ -23,7 +24,7 @@ const authUser = asyncWrapper(async (req, res) => {
 });
 
 const registerUser = asyncWrapper(async (req,res) => {
-    const { name, email, password, roles } = req.body;
+    const { name, email, password, roles, ethaddress } = req.body;
 
     const userExists = await User.findOne({ email });
 
@@ -36,7 +37,8 @@ const registerUser = asyncWrapper(async (req,res) => {
         name,
         email,
         password,
-        roles
+        roles,
+        ethaddress
     });
 
     if (user) {
@@ -45,7 +47,8 @@ const registerUser = asyncWrapper(async (req,res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            roles: user.roles
+            roles: user.roles,
+            ethaddress: user.ethaddress
         });
     } else {
         res.status(400);
@@ -66,7 +69,8 @@ const getUserProfile = asyncWrapper(async(req, res) => {
         _id: req.user._id,
         name: req.user.name,
         email: req.user.email,
-        roles: req.user.roles
+        roles: req.user.roles,
+        ethaddress: req.user.ethaddress
     }
     res.status(200).json({ user });
 });
@@ -85,7 +89,8 @@ const updateUserProfile = asyncWrapper(async(req, res) => {
         res.status(200).json({ 
             _id: updatedUser._id,
             name: updatedUser.name,
-            email: updatedUser.email
+            email: updatedUser.email,
+            ethaddress: updatedUser.ethaddress
          });
     } else { 
         res.status(404);

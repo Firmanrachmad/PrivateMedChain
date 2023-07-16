@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../App.css";
+import "../style/card.css";
 import axios from "axios";
-import { Card, Button, Row, Col, Form } from "react-bootstrap";
-
-import { FileTextFill } from "react-bootstrap-icons";
+import { Button, Row, Col, Form } from "react-bootstrap";
+import { PersonFill, FileEarmarkFill } from 'react-bootstrap-icons';
+import { BsFillCloudUploadFill } from "react-icons/bs";
 
 const Upload = () => {
   const [documents, setDocuments] = useState([]);
@@ -77,20 +78,22 @@ const Upload = () => {
 
   return (
     <div>
-      <Row className="justify-content-md-center mt-5 mt-md-3">
-        <Col xs={12} md={6} className="card p-5">
+      <Row
+        className="justify-content-md-center mt-5 mt-md-3"
+      >
+        <Col xs={12} md={6} className="card p-5 card-shadow">
           <h1 className="text-center mb-4">Add New Record</h1>
           <Form>
             <Form.Group controlId="name">
-              <Form.Label>Patient's Name</Form.Label>
+              <Form.Label><PersonFill className="me-2" size={18} />Patient's Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Add Patient's Name"
                 onChange={(e) => setName(e.target.value)}
               />
             </Form.Group>
-            <Form.Group controlId="file">
-              <Form.Label>File</Form.Label>
+            <Form.Group controlId="file" className="mt-3">
+              <Form.Label><FileEarmarkFill className="me-2" size={18} />File</Form.Label>
               <Form.Control type="file" ref={fileInputRef} />
             </Form.Group>
             <Button
@@ -99,35 +102,14 @@ const Upload = () => {
               onClick={addDocuments}
               className="mt-3"
             >
+            <BsFillCloudUploadFill className="me-2" size={18} />
               Add
             </Button>
           </Form>
         </Col>
       </Row>
-      <Row className="documents justify-content-md-center mt-3">
-        {documents &&
-          documents.map((document) => (
-            <Col md={4} className="document mb-3" key={document._id}>
-              <Card>
-                <Card.Body>
-                  <div className="d-flex align-items-center mb-3">
-                    <FileTextFill className="me-2" size={18} />
-                    <Card.Title>Patient's Record</Card.Title>
-                  </div>
-                  <Card.Text>{document.name}</Card.Text>
-                  <Button
-                    variant="success"
-                    onClick={() => downloadFile(document._id)}
-                    className="mt-3"
-                  >
-                    Download
-                  </Button>
-                  <Card.Link href="#" />
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-      </Row>
+
+      
     </div>
   );
 };

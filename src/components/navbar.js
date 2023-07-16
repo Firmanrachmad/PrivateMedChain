@@ -1,13 +1,16 @@
 import "../App.css";
+import "../style/navbar.css"
 
 import { Container, Navbar, Nav } from "react-bootstrap";
+import { DoorOpenFill, DoorClosedFill } from 'react-bootstrap-icons';
+
 
 function Navbarz() {
   return (
     <div>
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="bg-body-tertiary navbar-shadow">
         <Container>
-          <Navbar.Brand>Private EMR</Navbar.Brand>
+        <Navbar.Brand className="navbar-brand">Private <span>EMR</span></Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -18,7 +21,7 @@ function Navbarz() {
               <Nav.Link href="/documents">Documents</Nav.Link>
             </Nav>
             <Nav className="ms-auto">
-              <Nav.Link href="/login">Login</Nav.Link>
+              <Nav.Link href="/login"><DoorOpenFill className="me-2" size={18} />Login</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
