@@ -1,77 +1,38 @@
-import { useState } from "react";
-import { ethers } from "ethers";
-import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
-import "../App.css";
-import Navbar from "../components/navbar";
-
-const textAddress = "0x9192b930766A8151aE36bee3E656C8514b40617d";
+import { Container, Card, Button } from "react-bootstrap";
+import { SiMongodb, SiEthereum } from "react-icons/si";
+import { FaHospital } from "react-icons/fa";
 
 function Home() {
-  const [message, setMessage] = useState("");
-  const [currentText, setCurrentText] = useState("");
-
-  // Fungsi Helper
-
-  // Request ke dalam akun MetaMask
-  async function requestAccount() {
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-  }
-
-  // Mengambil nilai yang tersimpan pada MedRec
-  async function getText() {
-    // If terkoneksi MetaMask
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract = new ethers.Contract(textAddress, MedRec.abi, provider);
-      try {
-        const data = await contract.teks();
-        console.log("data: ", data);
-        setCurrentText(data);
-      } catch (error) {
-        console.log("error: ", error);
-      }
-    }
-  }
-
-  async function setText() {
-    if (!message) return;
-    // If terkoneksi MetaMask
-    if (typeof window.ethereum !== "undefined") {
-      await requestAccount();
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      const contract = new ethers.Contract(textAddress, MedRec.abi, signer);
-      const transaction = await contract.textInput(message);
-
-      setMessage("");
-      await transaction.wait();
-      getText();
-    }
-  }
-
   return (
-    <div className="App">
-      <h2>Smart Contract Testing Page</h2>
-      <div>
-        <input
-          onChange={(e) => setMessage(e.target.value)}
-          value={message}
-          placeholder="Set Text Here"
-          className="custom-input"
-        />
-        <button onClick={setText} className="set-button">
-          Set!
-        </button>
-      </div>
-      <div>
-        <button onClick={getText} className="get-button">
-          Get
-        </button>
-      </div>
-      <h2 className="teks">{currentText}</h2>
-      <h2 className="teks">Pemilik: {textAddress}</h2>
+    <div className="py-5">
+      <Container className="d-flex justify-content-center">
+        <Card className="p-5 d-flex flex-column align-items-center hero-card bg-light w-75">
+          <div className="d-flex flex-column align-items-center mb-4">
+            <FaHospital size={50} />
+            <h1 className="text-center mb-0">Private EMR</h1>
+          </div>
+
+          <p className="text-center mb-4">
+            Private EMR is an application that stores and distributes electronic
+            medical record data using the concept of OffChain and OnChain
+            storage. OffChain storage is supported by NoSQL database using
+            MongoDB. And OnChain storage is supported by the use of the Ethereum
+            Blockchain.
+          </p>
+
+          <div className="d-flex">
+            <Button variant="success" href="/login" className="me-3">
+              Log In
+            </Button>
+          </div>
+
+          <div className="mt-4">
+            <span className="text-muted">Powered by:</span>
+            <SiMongodb className="mx-2" size={32} />
+            <SiEthereum className="mx-2" size={32} />
+          </div>
+        </Card>
+      </Container>
     </div>
   );
 }
