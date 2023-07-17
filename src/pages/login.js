@@ -1,17 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Row, Col, Form } from "react-bootstrap";
-import {
-  EnvelopeFill,
-  LockFill,
-} from "react-bootstrap-icons";
+import { EnvelopeFill, LockFill } from "react-bootstrap-icons";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLoginMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
+import { toast } from 'react-toastify'
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [login, { isLoading }] = useLoginMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/profile");
+    }
+  }, [navigate, userInfo]);
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("submit");
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/profile");
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+      // console.log(err?.data?.message || err.error);
+    }
   };
   return (
     <Row className="justify-content-md-center mt-5">
@@ -24,7 +46,10 @@ const Login = () => {
 
         <Form onSubmit={submitHandler}>
           <Form.Group className="my-2" controlId="email">
-            <Form.Label><EnvelopeFill className="me-2" size={18} />Email Address</Form.Label>
+            <Form.Label>
+              <EnvelopeFill className="me-2" size={18} />
+              Email Address
+            </Form.Label>
             <Form.Control
               type="email"
               placeholder="Enter Email"
@@ -34,7 +59,10 @@ const Login = () => {
           </Form.Group>
 
           <Form.Group className="my-2" controlId="password">
-            <Form.Label><LockFill className="me-2" size={18} />Password</Form.Label>
+            <Form.Label>
+              <LockFill className="me-2" size={18} />
+              Password
+            </Form.Label>
             <Form.Control
               type="password"
               placeholder="Enter Password"

@@ -17,7 +17,7 @@ const authUser = asyncWrapper(async (req, res) => {
       ethadress: user.ethaddress,
     });
   } else {
-    res.status(400);
+    res.status(400).json({ message: "Invalid email or password" });
     throw new Error("Invalid email or password");
   }
 });

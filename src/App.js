@@ -9,10 +9,14 @@ import Login from './pages/login'
 import Testing from './pages/testing'
 import Profile from './pages/profile'
 import {Routes, Route} from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (<>
   <Navbarz/>
+  <ToastContainer />
   <Routes>
     <Route path="/" element={<Home />}/>
     <Route path="/login" element={<Login />}/>
