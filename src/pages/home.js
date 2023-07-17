@@ -1,8 +1,10 @@
 import { Container, Card, Button } from "react-bootstrap";
 import { SiMongodb, SiEthereum } from "react-icons/si";
 import { FaHospital } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 function Home() {
+  const { userInfo } = useSelector((state) => state.auth);
   return (
     <div className="py-5">
       <Container className="d-flex justify-content-center">
@@ -21,9 +23,19 @@ function Home() {
           </p>
 
           <div className="d-flex">
-            <Button variant="success" href="/login" className="me-3">
-              Log In
-            </Button>
+            {userInfo ? (
+              <>
+                <p className="text-center mb-4">
+                  Welcome, {userInfo.name}!
+                </p>
+              </>
+            ) : (
+              <>
+                <Button variant="success" href="/login" className="me-3">
+                  Log In
+                </Button>
+              </>
+            )}
           </div>
 
           <div className="mt-4">
