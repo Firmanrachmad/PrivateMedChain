@@ -14,7 +14,7 @@ const authUser = asyncWrapper(async (req, res) => {
       name: user.name,
       email: user.email,
       roles: user.roles,
-      ethadress: user.ethaddress,
+      ethaddress: user.ethaddress,
     });
   } else {
     res.status(400).json({ message: "Invalid email or password" });
@@ -89,7 +89,6 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
-      ethaddress: updatedUser.ethaddress,
     });
   } else {
     res.status(404);
@@ -132,7 +131,7 @@ const getAllUser = asyncWrapper(async (req, res) => {
 
 const deleteUser = asyncWrapper(async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.params.id);
 
     if (user) {
       // Jika pengguna ditemukan, lakukan penghapusan

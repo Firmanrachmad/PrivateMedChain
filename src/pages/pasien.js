@@ -8,24 +8,44 @@ import {
   WalletFill,
 } from "react-bootstrap-icons";
 import { BsFillPersonPlusFill } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from 'react-toastify';
+import { useRegisterMutation } from "../slices/usersApiSlice";
 
 function Pasien() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [ethAddress, setEthAddress] = useState("");
+  const [ethaddress, setEthAddress] = useState("");
 
-  const handleOnSubmit = async (e) => {
+  const dispatch = useDispatch();
+
+  const [register, { isLoading }] = useRegisterMutation();
+
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("submit");
+    if (password !== confirmPassword) {
+      toast.error('Password do not match');
+    } else {  
+      try {
+        const roles = "P";
+        const res = await register({ name, email, ethaddress, password, roles}).unwrap();
+        console.log(res);
+        toast.success('Pasien Successfully Added!');
+        window.location.reload();
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    }
   };
 
   return (
     <Row className="justify-content-md-center mt-5 mt-md-3">
       <Col xs={12} md={6} className="card p-5">
         <h1 className="text-center mb-4">Add New Pasien</h1>
-        <Form onSubmit={handleOnSubmit}>
+        <Form onSubmit={submitHandler}>
           <Form.Group className="my-2" controlId="name">
             <Form.Label><PersonFill className="me-2" size={18} />Name</Form.Label>
             <Form.Control
@@ -51,7 +71,7 @@ function Pasien() {
             <Form.Control
               type="text"
               placeholder="Enter ethAddress"
-              value={ethAddress}
+              value={ethaddress}
               onChange={(e) => setEthAddress(e.target.value)}
             ></Form.Control>
           </Form.Group>

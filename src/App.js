@@ -8,6 +8,7 @@ import Tenaga from "./pages/tenaga";
 import Login from "./pages/login";
 import Testing from "./pages/testing";
 import Profile from "./pages/profile";
+import ChangeProfile from "./pages/changeProfile";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/documents" element={<Documents />} />
         <Route path="/testing" element={<Testing />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/changeprofile" element={<ChangeProfile />} />
       </Routes>
     </>
   );

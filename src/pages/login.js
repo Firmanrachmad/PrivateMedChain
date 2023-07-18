@@ -30,6 +30,7 @@ const Login = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       navigate("/profile");
+      toast.success('Login Successful!');
     } catch (err) {
       toast.error(err?.data?.message || err.error);
       // console.log(err?.data?.message || err.error);

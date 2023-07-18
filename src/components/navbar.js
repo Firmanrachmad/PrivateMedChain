@@ -43,7 +43,7 @@ function Navbarz() {
 
               {/* Tampilkan Home untuk semua pengguna */}
 
-              <Nav.Link href="/">Home</Nav.Link>
+              {userInfo && <Nav.Link href="/">Home</Nav.Link>}
 
               {/* Tampilkan Pasien dan Tenaga hanya untuk peran PRK */}
 
