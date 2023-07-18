@@ -36,7 +36,7 @@ function Profile() {
             <div className="d-flex align-items-center my-2">
               <LockFill className="me-2" size={18} />
               <div>Password: ********</div>
-              <Button variant="warning" size="sm" className="ms-2">
+              <Button variant="warning" size="sm" className="ms-2" href="/changepassword">
                 Change Password
               </Button>
             </div>

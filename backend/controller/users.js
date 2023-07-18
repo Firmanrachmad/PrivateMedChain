@@ -76,12 +76,19 @@ const getUserProfile = asyncWrapper(async (req, res) => {
 
 const updateUserProfile = asyncWrapper(async (req, res) => {
   const user = await User.findById(req.user._id);
+  const enteredPassword = req.body.oldPassword;
+  const newPassword = req.body.newPassword;
 
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    if (req.body.password) {
-      user.password = req.body.password;
+    if (newPassword) {
+      if ((await user.matchPassword(enteredPassword))) {
+        user.password = newPassword;
+      } else {
+        res.status(400).json({ message: "Invalid Old Password" });
+        throw new Error("Invalid Old Password");
+      }
     }
 
     const updatedUser = await user.save();
@@ -112,7 +119,6 @@ const updateUserId = asyncWrapper(async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
-      ethaddress: updatedUser.ethaddress,
     });
   } else {
     res.status(404);
