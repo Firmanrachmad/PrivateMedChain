@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import { Button, Row, Col, Form, Card } from "react-bootstrap";
 import {
@@ -16,7 +16,6 @@ import {
   useDeleteUserMutation,
 } from "../slices/usersApiSlice";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import ChangeUserById from "./changeUserById";
 
 function Tenaga() {
   const [name, setName] = useState("");
@@ -30,6 +29,8 @@ function Tenaga() {
   const [register] = useRegisterMutation();
   const [alluser] = useAllUserMutation();
   const [deleteuser] = useDeleteUserMutation();
+
+  const navigate = useNavigate();
 
   const getUsers = async () => {
     setLoading(true);
@@ -53,8 +54,8 @@ function Tenaga() {
       await deleteuser({
         _id: id,
       });
-      window.location.reload();
       toast.success("User Deleted!");
+      navigate('/tenaga');
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -66,7 +67,7 @@ function Tenaga() {
       toast.error("Password do not match");
     } else {
       try {
-        const roles = "P";
+        const roles = "TK";
         const res = await register({
           name,
           email,
@@ -75,8 +76,8 @@ function Tenaga() {
           roles,
         }).unwrap();
         console.log(res);
-        window.location.reload();
-        toast.success("Pasien Successfully Added!");
+        toast.success("Tenaga Kesehatan Successfully Added!");
+        navigate('/tenaga');
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }

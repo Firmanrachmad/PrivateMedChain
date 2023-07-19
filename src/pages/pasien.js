@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import { Button, Row, Col, Form, Card } from "react-bootstrap";
 import {
@@ -16,7 +16,7 @@ import {
   useDeleteUserMutation,
 } from "../slices/usersApiSlice";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import ChangeUserById from "./changeUserById";
+
 
 function Pasien() {
   const [name, setName] = useState("");
@@ -30,6 +30,8 @@ function Pasien() {
   const [register] = useRegisterMutation();
   const [alluser] = useAllUserMutation();
   const [deleteuser] = useDeleteUserMutation();
+
+  const navigate = useNavigate();
 
   const getUsers = async () => {
     setLoading(true);
@@ -53,8 +55,8 @@ function Pasien() {
       await deleteuser({
         _id: id,
       });
-      window.location.reload();
       toast.success("User Deleted!");
+      navigate('/pasien');
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -75,8 +77,8 @@ function Pasien() {
           roles,
         }).unwrap();
         console.log(res);
-        window.location.reload();
         toast.success("Pasien Successfully Added!");
+        navigate('/pasien');
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
