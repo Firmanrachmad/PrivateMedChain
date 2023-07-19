@@ -28,7 +28,7 @@ const registerUser = asyncWrapper(async (req, res) => {
   const userExists = await User.findOne({ email });
 
   if (userExists) {
-    res.status(400);
+    res.status(400).json({ message: "User Already Exists" });
     throw new Error("User Already Exists");
   }
 
@@ -80,10 +80,12 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
   const newPassword = req.body.newPassword;
 
   if (user) {
+
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+
     if (newPassword) {
-      if ((await user.matchPassword(enteredPassword))) {
+      if (await user.matchPassword(enteredPassword)) {
         user.password = newPassword;
       } else {
         res.status(400).json({ message: "Invalid Old Password" });
@@ -102,6 +104,12 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
     throw new Error("User not found");
   }
 });
+
+const getUserId = asyncWrapper(async (req, res) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  res.status(200).json({ user });
+})
 
 const updateUserId = asyncWrapper(async (req, res) => {
   const userId = req.params.id;
@@ -158,6 +166,7 @@ module.exports = {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getUserId,
   updateUserId,
   getAllUser,
   deleteUser,

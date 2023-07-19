@@ -8,6 +8,7 @@ const {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getUserId,
   updateUserId,
   getAllUser,
   deleteUser,
@@ -22,6 +23,7 @@ router
   .put(protect, updateUserProfile);
 router.route("/allusers").get(checkPRKRoles, getAllUser);
 router.route("/delete/:id").delete(checkPRKRoles, deleteUser);
+router.route("/get/:id").get(checkPRKRoles, getUserId);
 router.route("/update/:id").put(checkPRKRoles, updateUserId);
 
 module.exports = router;

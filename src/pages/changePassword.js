@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../App.css";
 import { Button, Row, Col, Form } from "react-bootstrap";
-import { PersonFill, EnvelopeFill } from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
