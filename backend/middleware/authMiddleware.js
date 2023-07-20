@@ -47,7 +47,7 @@ const checkPRKRoles = asyncWrapper(async (req, res, next) => {
   }
 });
 
-const checkTkRoles = asyncWrapper(async (req, res, next) => {
+const checkRoles = asyncWrapper(async (req, res, next) => {
   let token;
 
   token = req.cookies.jwt;
@@ -56,7 +56,7 @@ const checkTkRoles = asyncWrapper(async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.userId).select("-password");
-      if (req.user.roles == "TK") {
+      if (req.user.roles == "TK" || req.user.roles == "PRK") {
         next();
       } else {
         res.status(403);
@@ -72,4 +72,4 @@ const checkTkRoles = asyncWrapper(async (req, res, next) => {
   }
 });
 
-module.exports = { protect, checkPRKRoles, checkTkRoles };
+module.exports = { protect, checkPRKRoles, checkRoles };

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { protect, checkPRKRoles, checkTkRoles } = require("../middleware/authMiddleware");
+const { protect, checkPRKRoles, checkRoles } = require("../middleware/authMiddleware");
 
 const {
   authUser,
@@ -21,7 +21,7 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
-router.route("/allusers").get(checkPRKRoles, getAllUser);
+router.route("/allusers").get(checkRoles, getAllUser);
 router.route("/delete/:id").delete(checkPRKRoles, deleteUser);
 router.route("/get/:id").get(checkPRKRoles, getUserId);
 router.route("/update/:id").put(checkPRKRoles, updateUserId);

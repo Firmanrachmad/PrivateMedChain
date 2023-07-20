@@ -41,8 +41,8 @@ const encryptId = asyncWrapper(async (req, res) => {
   const { id } = req.params;
   const documentId = id;
   const encryptedId = encryptText(documentId, publicKeyPEMs);
-  const asymmetric = await Asymmetric.create({ encryptedId });
-  res.status(201).json({ asymmetric });
+  // const asymmetric = await Asymmetric.create({ encryptedId });
+  res.status(201).json({ encryptedId });
 });
 
 const decryptId = asyncWrapper(async (req, res) => {
