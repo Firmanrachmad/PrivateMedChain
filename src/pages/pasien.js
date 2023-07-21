@@ -72,7 +72,6 @@ function Pasien() {
         const res = await register({
           name,
           email,
-          ethaddress,
           password,
           roles,
         }).unwrap();
@@ -114,19 +113,6 @@ function Pasien() {
                 placeholder="Enter Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-
-            <Form.Group className="my-2" controlId="ethAddress">
-              <Form.Label>
-                <WalletFill className="me-2" size={18} />
-                ETH Address
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter ethAddress"
-                value={ethaddress}
-                onChange={(e) => setEthAddress(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
@@ -183,7 +169,7 @@ function Pasien() {
                   </div>
                   <hr style={{ borderTop: "4px solid #ccc" }} />
                   <Card.Text>Name: {user.name}</Card.Text>
-                  <Card.Text>ETH Address: {user.ethaddress}</Card.Text>
+                  <Card.Text>ETH Address: {user.ethaddress.address}</Card.Text>
                   <Card.Text>Date Created: {user.createdAt}</Card.Text>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Link to={`/changeuserbyid/${user._id}`}>

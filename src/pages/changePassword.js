@@ -28,6 +28,7 @@ function ChangePassword() {
       }).unwrap();
       dispatch(setCredentials({ ...res }));
       toast.success("Password Updated!");
+      console.log(res);
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }

@@ -4,25 +4,27 @@ const { generateToken } = require("../utils/generateToken");
 const ethers = require("ethers");
 const crypto = require("crypto");
 
-function deriveSecretKeyFromPassword(password) {
-  const salt = crypto.randomBytes(16);
-  const keyLength = 32; // Panjang kunci yang diinginkan (32 byte = 256 bit untuk AES-256)
+function deriveSecretKeyFromPassword(password, salt) {
+  const keyLength = 32; // 256-bit key length (32 bytes)
   return crypto.scryptSync(password, salt, keyLength);
 }
 
 function encryptText(plainText, password) {
-  const secretKey = deriveSecretKeyFromPassword(password);
+  const salt = crypto.randomBytes(16);
+  const secretKey = deriveSecretKeyFromPassword(password, salt);
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
   let encrypted = cipher.update(plainText, "utf-8", "base64");
   encrypted += cipher.final("base64");
-  return iv.toString("base64") + ":" + encrypted;
+  return salt.toString("base64") + ":" + iv.toString("base64") + ":" + encrypted;
 }
 
-function decryptText(encryptedText, secretKey) {
+function decryptText(encryptedText, password) {
   const parts = encryptedText.split(":");
-  const iv = Buffer.from(parts[0], "base64");
-  const encrypted = parts[1];
+  const salt = Buffer.from(parts[0], "base64");
+  const iv = Buffer.from(parts[1], "base64");
+  const encrypted = parts[2];
+  const secretKey = deriveSecretKeyFromPassword(password, salt);
   const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
   let decrypted = decipher.update(encrypted, "base64", "utf-8");
   decrypted += decipher.final("utf-8");
@@ -63,6 +65,7 @@ const registerUser = asyncWrapper(async (req, res) => {
   const _privateKey = "0x" + idCrypto;
 
   const privateKey = encryptText(_privateKey, password);
+  const decryptedprivateKey = decryptText(privateKey, password);
   const address = new ethers.Wallet(_privateKey).address;
 
   const user = await User.create({
@@ -81,6 +84,7 @@ const registerUser = asyncWrapper(async (req, res) => {
       email: user.email,
       roles: user.roles,
       ethaddress: user.ethaddress,
+      decryptprivatekey: decryptedprivateKey,
     });
   } else {
     res.status(400);
@@ -109,9 +113,12 @@ const getUserProfile = asyncWrapper(async (req, res) => {
 
 const updateUserProfile = asyncWrapper(async (req, res) => {
   const user = await User.findById(req.user._id);
-  // const oldPrivateKey = decryptText(user.ethaddress.privatekey, user.password);
   const enteredPassword = req.body.oldPassword;
   const newPassword = req.body.newPassword;
+  // const decryptedPrivateKey = decryptText(
+  //   user.ethaddress.privatekey,
+  //   enteredPassword,
+  // );
 
   if (user) {
     user.name = req.body.name || user.name;
@@ -121,7 +128,7 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
       if (await user.matchPassword(enteredPassword)) {
         const decryptedPrivateKey = decryptText(
           user.ethaddress.privatekey,
-          user.password
+          enteredPassword,
         );
         const newencryptedPrivateKey = encryptText(
           decryptedPrivateKey,
@@ -141,9 +148,11 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
     res.status(200).json({
       // oldPrivateKey: oldPrivateKey,
       // newPrivateKey: newPrivateKey,
+      // decryptprivatekey: decryptedPrivateKey,
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      roles: updatedUser.roles,
       ethaddress: updatedUser.ethaddress.privatekey,
     });
   } else {
@@ -161,6 +170,7 @@ const getUserId = asyncWrapper(async (req, res) => {
 const updateUserId = asyncWrapper(async (req, res) => {
   const userId = req.params.id;
   const user = await User.findById(userId);
+  
 
   if (user) {
     user.name = req.body.name || user.name;

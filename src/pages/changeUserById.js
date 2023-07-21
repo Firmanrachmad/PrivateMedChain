@@ -24,6 +24,7 @@ function ChangeUserById() {
   const navigate = useNavigate();
 
   const getUsers = async () => {
+    toast.warning("PERINGATAN! Mengganti password tanpa password lama akan berdampak pada Ethereum Address!");
     try {
       const res = await getuserid({
         _id: id,
@@ -58,6 +59,7 @@ function ChangeUserById() {
   };
 
   useEffect(() => {
+    
     getUsers();
   }, []);
 
