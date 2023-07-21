@@ -20,9 +20,15 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     ethaddress:{
-        type: String,
-        required: true,
-    }
+        address: {
+            type: String,
+            required: true,
+        },
+        privatekey: {
+            type: String,
+            required: true,
+        },
+    },
 }, {
     timestamps: true
 });

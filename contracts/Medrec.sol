@@ -4,79 +4,71 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 
 contract Medrec {
+    uint256 idDigit = 8;
+    uint256 digitMod = idDigit ** 10;
+    address private officer;
+
     struct Record {
         string hashValue;
         address patientId;
         address doctorId;
-        address officerId;
         uint256 timeAdded;
     }
 
-    struct Patient {
-        address id;
-        Record[] records;
-        mapping(address => bool) assignedDoctors; // Mapping to track assigned doctors
-    }
+    mapping(address => uint256[]) private _listId;
+    mapping(uint256 => Record) private _idToRecord;
+    mapping(address => bool) private doctors;
+    mapping(address => bool) private patient;
 
-    mapping(address => Patient) public patients;
-    mapping(address => bool) public doctors;
-    address public officer;
-
-    event PatientAdded(address patientId);
-    event DoctorAdded(address doctorId);
-    event RecordAdded(string hashValue, address patientId, address doctorId, address officerId);
 
     modifier senderIsDoctor() {
         require(doctors[msg.sender], "Sender is not a doctor");
         _;
     }
 
-    modifier senderIsPatient() {
-        require(patients[msg.sender].id == msg.sender, "Sender is not a patient");
-        _;
-    }
-
     modifier senderIsOfficer() {
-        require(msg.sender == officer, "Sender is not an officer");
+        require(msg.sender==officer);
         _;
     }
 
-
-    function addPatient() public {
-        require(patients[msg.sender].id == address(0), "This patient already exists.");
-        patients[msg.sender].id = msg.sender;
-
-        emit PatientAdded(msg.sender);
+    constructor(address _officer) {
+        officer = _officer;
     }
 
-    function addDoctor() public {
-        require(!doctors[msg.sender], "This doctor already exists.");
-        doctors[msg.sender] = true;
 
-        emit DoctorAdded(msg.sender);
+    function addDoctor(address _doctorAddress) external senderIsOfficer{
+        require(_doctorAddress != address(0));
+        require(!doctors[_doctorAddress]);
+        doctors[_doctorAddress] = true;
     }
 
-    function assignDoctor(address doctorAddress) public senderIsDoctor senderIsOfficer {
-        require(doctors[doctorAddress], "The provided address is not a doctor");
-        patients[msg.sender].assignedDoctors[doctorAddress] = true;
+    function addPatient(address _patientAddress) external senderIsOfficer {
+        require(_patientAddress != address(0));
+        require(!patient[_patientAddress]);
+        patient[_patientAddress] = true;
     }
 
-    function setOfficer(address officerAddress) public {
-        officer = officerAddress;
+    function addRecord(string memory _hashValue, address _patienAddress) external {
+        require(_patienAddress != address(0));
+        require(patient[_patienAddress]);
+        uint256 _id = _generateId(_patienAddress, msg.sender);
+        _listId[_patienAddress].push(_id);
+        _idToRecord[_id] = Record(_hashValue, _patienAddress, msg.sender, block.timestamp);
     }
 
-    function addRecord(string memory _hashValue, address _patientId) public senderIsDoctor {
-        require(patients[_patientId].id == _patientId, "Patient does not exist");
-        require(patients[_patientId].assignedDoctors[msg.sender], "Sender is not the assigned doctor for this patient");
-
-        Record memory record = Record(_hashValue, _patientId, msg.sender, officer, block.timestamp);
-        patients[_patientId].records.push(record);
-
-        emit RecordAdded(_hashValue, _patientId, msg.sender, officer);
+    function getRecordLIst(address _patien) external view returns(uint256[] memory) {
+        return _listId[_patien];
     }
 
-    function getRecords(address _patientId) public view senderIsPatient returns (Record[] memory) {
-        require(patients[_patientId].id == _patientId, "Patient does not exist");
-        return patients[_patientId].records;
+    function getRecordData(uint256 _id) external view returns(string memory, address, uint256) {
+        return (_idToRecord[_id].hashValue, _idToRecord[_id].doctorId, _idToRecord[_id].timeAdded);
+    }
+
+    function _generateId(address _patiendAddress, address _senderAddress) private view returns(uint256 _id) {
+        _id = uint256(
+            keccak256(
+                abi.encodePacked(_patiendAddress, _senderAddress, block.timestamp)
+            )
+        ) % digitMod;
     }
 }

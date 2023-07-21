@@ -43,7 +43,7 @@ function Profile() {
 
             <div className="d-flex align-items-center my-2">
               <WalletFill className="me-2" size={18} />
-              <div>Ethereum Address: {userInfo.ethaddress}</div>
+              <div>Ethereum Address: {userInfo.ethaddress.address}</div>
             </div>
 
             <Button
