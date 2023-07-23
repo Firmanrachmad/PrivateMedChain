@@ -6,14 +6,17 @@ import { ethers } from "ethers";
 import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
 import { Card, Button, Row, Col, Form } from "react-bootstrap";
 
-import { FileTextFill } from "react-bootstrap-icons";
 import { BsCloudDownload, BsFillFileEarmarkTextFill } from "react-icons/bs";
+import { useSelector } from "react-redux/es/hooks/useSelector";
 
 const textAddress = "0x1e5b4c061f9D6EE96f491955F719293599412bE1";
 
 function Documents() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const { userInfo } = useSelector((state) => state.auth);
+  const hasRole = (role) => userInfo?.roles?.includes(role);
 
   async function requestAccount() {
     await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -85,6 +88,24 @@ function Documents() {
   return (
     <div>
       <Row
+        className="justify-content-end align-items-center mt-3"
+        style={{ margin: "0 20px" }}
+      >
+        <Col md={6}>
+          <Form>
+            <Form.Control
+              type="text"
+              placeholder="Search..."
+            />
+          </Form>
+        </Col>
+        <Col md={2}>
+          <Button variant="primary">
+            Search
+          </Button>
+        </Col>
+      </Row>
+      <Row
         className="documents justify-content-md-center mt-3"
         style={{ margin: "0 20px" }}
       >
@@ -96,7 +117,7 @@ function Documents() {
                 <Card className="document card-shadow">
                   <Card.Body>
                     <div className="d-flex align-items-center mb-3 ">
-                    <BsFillFileEarmarkTextFill className="me-2" size={18} />
+                      <BsFillFileEarmarkTextFill className="me-2" size={18} />
                       <Card.Title>Patient's Record</Card.Title>
                     </div>
                     <Card.Text>
@@ -112,7 +133,7 @@ function Documents() {
                       onClick={() => decryptFile(document.encryptedId)}
                       className="mt-3"
                     >
-                    <BsCloudDownload className="me-2" size={18} />
+                      <BsCloudDownload className="me-2" size={18} />
                       Download
                     </Button>
                     <Card.Link href="#" />

@@ -72,8 +72,9 @@ const Upload = () => {
       encryptFile(documentId);
       toast.success("Upload Successful!");
       navigate('/upload');
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+      console.log(err.error);
     }
   };
 
@@ -128,7 +129,7 @@ const Upload = () => {
                 <option value="">Select Patient</option>
                 {users &&
                   users.map((user) => (
-                    <option key={user._id} value={user.ethaddress}>
+                    <option key={user._id} value={user.ethaddress.address}>
                       {user.name}
                     </option>
                   ))}
