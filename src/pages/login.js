@@ -18,6 +18,10 @@ const Login = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
+  async function requestAccount() {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+  }
+
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -30,6 +34,7 @@ const Login = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       navigate("/profile");
+      requestAccount();
       toast.success('Login Successful!');
     } catch (err) {
       toast.error(err?.data?.message || err.error);

@@ -19,36 +19,9 @@ function Testing() {
 
   // Mengambil nilai yang tersimpan pada MedRec
   async function getText() {
-    // If terkoneksi MetaMask
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract = new ethers.Contract(textAddress, MedRec.abi, provider);
-      try {
-        const data = await contract.teks();
-        console.log("data: ", data);
-        setCurrentText(data);
-      } catch (error) {
-        console.log("error: ", error);
-      }
-    }
   }
 
   async function setText() {
-    if (!message) return;
-    // If terkoneksi MetaMask
-    if (typeof window.ethereum !== "undefined") {
-      await requestAccount();
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      const contract = new ethers.Contract(textAddress, MedRec.abi, signer);
-      const transaction = await contract.textInput(message);
-
-      setMessage("");
-      await transaction.wait();
-      getText();
-    }
   }
 
   return (

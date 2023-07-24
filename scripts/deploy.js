@@ -10,26 +10,12 @@ async function main() {
   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
   const unlockTime = currentTimestampInSeconds + 60;
 
-  const lockedAmount = hre.ethers.utils.parseEther("0.001");
-
-  // const Lock = await hre.ethers.getContractFactory("Lock");
-  // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const officerAddress = "0xc005eE12E2f39517e8745592f4fA750B5e984b50";
 
   const MedRec = await hre.ethers.getContractFactory("Medrec");
-  const mr = await MedRec.deploy("Hello World!");
-
-  // await lock.deployed();
-  await mr.deployed();
-
-  // console.log(
-  //   `Lock with ${ethers.utils.formatEther(
-  //     lockedAmount
-  //   )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  // );
+  const mr = await MedRec.deploy(officerAddress);
   console.log(
-    `Lock with ${ethers.utils.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${mr.address}`
+    `ETH and unlock timestamp ${unlockTime} deployed to ${mr.address}`
   );
 }
 

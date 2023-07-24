@@ -2,9 +2,12 @@ import { Container, Card, Button } from "react-bootstrap";
 import { SiMongodb, SiEthereum } from "react-icons/si";
 import { FaHospital } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 function Home() {
   const { userInfo } = useSelector((state) => state.auth);
+
+
   return (
     <div className="py-5">
       <Container className="d-flex justify-content-center">

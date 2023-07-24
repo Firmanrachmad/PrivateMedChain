@@ -7,7 +7,7 @@ module.exports = {
   networks: {
     localganache: {
       url: process.env.PROVIDER_URL,
-      chainId: 7545,
+      chainId: 1337,
       accounts: {
         mnemonic: process.env.MNEMONIC,
         path: "m/44'/60'/0'/0",
