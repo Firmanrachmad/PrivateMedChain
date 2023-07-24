@@ -16,7 +16,9 @@ import {
   useDeleteUserMutation,
 } from "../slices/usersApiSlice";
 import { FaEdit, FaTrash } from "react-icons/fa";
-
+import { contractAddress } from "../utils/globalVar";
+import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
+import { ethers } from "ethers";
 
 function Pasien() {
   const [name, setName] = useState("");
@@ -56,11 +58,48 @@ function Pasien() {
         _id: id,
       });
       toast.success("User Deleted!");
-      navigate('/pasien');
+      navigate("/pasien");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
   };
+
+  async function requestAccount() {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+  }
+
+  async function setPatient(address) {
+    // If MetaMask exists
+    try {
+      if (typeof window.ethereum !== "undefined") {
+        await requestAccount();
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        // Create contract with signer
+        /*
+          function addPatient(address _patientAddress) external senderIsOfficer {
+            require(_patientAddress != address(0), "Patient Address Null");
+            require(!patient[_patientAddress], "Patient Address Already Exists");
+            patient[_patientAddress] = true;
+          } 
+        */
+
+        const contract = new ethers.Contract(
+          contractAddress,
+          MedRec.abi,
+          signer
+        );
+        const transaction = await contract.addPatient(address);
+
+        await transaction.wait();
+        toast.success("Patient Added to Blockchain");
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  }
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -69,15 +108,16 @@ function Pasien() {
     } else {
       try {
         const roles = "P";
+        setPatient(ethaddress);
         const res = await register({
           name,
           email,
           password,
           roles,
+          ethaddress,
         }).unwrap();
         console.log(res);
-        toast.success("Pasien Successfully Added!");
-        navigate('/pasien');
+        navigate("/pasien");
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -113,6 +153,19 @@ function Pasien() {
                 placeholder="Enter Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group className="my-2" controlId="ethaddress">
+              <Form.Label>
+                <WalletFill className="me-2" size={18} />
+                Ethereum Address
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Ethereum Address"
+                value={ethaddress}
+                onChange={(e) => setEthAddress(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
@@ -169,7 +222,7 @@ function Pasien() {
                   </div>
                   <hr style={{ borderTop: "4px solid #ccc" }} />
                   <Card.Text>Name: {user.name}</Card.Text>
-                  <Card.Text>ETH Address: {user.ethaddress.address}</Card.Text>
+                  <Card.Text>ETH Address: {user.ethaddress}</Card.Text>
                   <Card.Text>Date Created: {user.createdAt}</Card.Text>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Link to={`/changeuserbyid/${user._id}`}>

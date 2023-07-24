@@ -2,8 +2,7 @@ import "../App.css";
 import "../style/navbar.css";
 
 import { Container, Navbar, Nav, NavDropdown, Badge } from "react-bootstrap";
-import { DoorOpenFill, DoorClosedFill } from "react-bootstrap-icons";
-import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { FaSignInAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { LinkContainer } from "react-router-bootstrap";

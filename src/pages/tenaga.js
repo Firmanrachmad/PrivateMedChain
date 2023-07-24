@@ -16,6 +16,9 @@ import {
   useDeleteUserMutation,
 } from "../slices/usersApiSlice";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { contractAddress } from "../utils/globalVar";
+import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
+import { ethers } from "ethers";
 
 function Tenaga() {
   const [name, setName] = useState("");
@@ -36,7 +39,9 @@ function Tenaga() {
     setLoading(true);
     try {
       const res = await alluser({});
-      const filteredUsers = res.data.users.filter((user) => user.roles === "TK");
+      const filteredUsers = res.data.users.filter(
+        (user) => user.roles === "TK"
+      );
       setUsers(filteredUsers);
       setLoading(false);
       console.log(filteredUsers);
@@ -55,11 +60,48 @@ function Tenaga() {
         _id: id,
       });
       toast.success("User Deleted!");
-      navigate('/tenaga');
+      navigate("/tenaga");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
   };
+
+  async function requestAccount() {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+  }
+
+  async function setDoctor(address) {
+    // If MetaMask exists
+    try {
+      if (typeof window.ethereum !== "undefined") {
+        await requestAccount();
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        // Create contract with signer
+        /*
+          function addDoctor(address _doctorAddress) external senderIsOfficer{
+            require(_doctorAddress != address(0), "Doctor Address Null");
+            require(!doctors[_doctorAddress], "Doctor Address Already Exists");
+            doctors[_doctorAddress] = true;
+          }
+        */
+
+        const contract = new ethers.Contract(
+          contractAddress,
+          MedRec.abi,
+          signer
+        );
+        const transaction = await contract.addDoctor(address);
+
+        await transaction.wait();
+        toast.success("Doctor Added to Blockchain");
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  }
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -68,15 +110,16 @@ function Tenaga() {
     } else {
       try {
         const roles = "TK";
+        setDoctor(ethaddress);
         const res = await register({
           name,
           email,
           password,
           roles,
+          ethaddress,
         }).unwrap();
         console.log(res);
-        toast.success("Tenaga Kesehatan Successfully Added!");
-        navigate('/tenaga');
+        navigate("/tenaga");
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -112,6 +155,19 @@ function Tenaga() {
                 placeholder="Enter Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group className="my-2" controlId="ethaddress">
+              <Form.Label>
+                <WalletFill className="me-2" size={18} />
+                Ethereum Address
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Ethereum Address"
+                value={ethaddress}
+                onChange={(e) => setEthAddress(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
@@ -168,7 +224,7 @@ function Tenaga() {
                   </div>
                   <hr style={{ borderTop: "4px solid #ccc" }} />
                   <Card.Text>Name: {user.name}</Card.Text>
-                  <Card.Text>ETH Address: {user.ethaddress.address}</Card.Text>
+                  <Card.Text>ETH Address: {user.ethaddress}</Card.Text>
                   <Card.Text>Date Created: {user.createdAt}</Card.Text>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Link to={`/changeuserbyid/${user._id}`}>

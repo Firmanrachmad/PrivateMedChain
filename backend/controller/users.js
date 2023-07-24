@@ -1,35 +1,6 @@
 const asyncWrapper = require("../middleware/asyncWrapper");
 const User = require("../models/Users");
 const { generateToken } = require("../utils/generateToken");
-const ethers = require("ethers");
-const crypto = require("crypto");
-
-function deriveSecretKeyFromPassword(password, salt) {
-  const keyLength = 32; // 256-bit key length (32 bytes)
-  return crypto.scryptSync(password, salt, keyLength);
-}
-
-function encryptText(plainText, password) {
-  const salt = crypto.randomBytes(16);
-  const secretKey = deriveSecretKeyFromPassword(password, salt);
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
-  let encrypted = cipher.update(plainText, "utf-8", "base64");
-  encrypted += cipher.final("base64");
-  return salt.toString("base64") + ":" + iv.toString("base64") + ":" + encrypted;
-}
-
-function decryptText(encryptedText, password) {
-  const parts = encryptedText.split(":");
-  const salt = Buffer.from(parts[0], "base64");
-  const iv = Buffer.from(parts[1], "base64");
-  const encrypted = parts[2];
-  const secretKey = deriveSecretKeyFromPassword(password, salt);
-  const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
-  let decrypted = decipher.update(encrypted, "base64", "utf-8");
-  decrypted += decipher.final("utf-8");
-  return decrypted;
-}
 
 const authUser = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
@@ -43,7 +14,7 @@ const authUser = asyncWrapper(async (req, res) => {
       name: user.name,
       email: user.email,
       roles: user.roles,
-      ethaddress: user.ethaddress.address,
+      ethaddress: user.ethaddress,
     });
   } else {
     res.status(400).json({ message: "Invalid email or password" });
@@ -52,7 +23,7 @@ const authUser = asyncWrapper(async (req, res) => {
 });
 
 const registerUser = asyncWrapper(async (req, res) => {
-  const { name, email, password, roles } = req.body;
+  const { name, email, password, roles, ethaddress } = req.body;
 
   const userExists = await User.findOne({ email });
 
@@ -61,19 +32,12 @@ const registerUser = asyncWrapper(async (req, res) => {
     throw new Error("User Already Exists");
   }
 
-  const idCrypto = crypto.randomBytes(32).toString("hex");
-  const _privateKey = "0x" + idCrypto;
-
-  const privateKey = encryptText(_privateKey, password);
-  const decryptedprivateKey = decryptText(privateKey, password);
-  const address = new ethers.Wallet(_privateKey).address;
-
   const user = await User.create({
     name,
     email,
     password,
     roles,
-    ethaddress: { address, privatekey: privateKey },
+    ethaddress,
   });
 
   if (user) {
@@ -84,7 +48,6 @@ const registerUser = asyncWrapper(async (req, res) => {
       email: user.email,
       roles: user.roles,
       ethaddress: user.ethaddress,
-      decryptprivatekey: decryptedprivateKey,
     });
   } else {
     res.status(400);
@@ -115,10 +78,6 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
   const user = await User.findById(req.user._id);
   const enteredPassword = req.body.oldPassword;
   const newPassword = req.body.newPassword;
-  // const decryptedPrivateKey = decryptText(
-  //   user.ethaddress.privatekey,
-  //   enteredPassword,
-  // );
 
   if (user) {
     user.name = req.body.name || user.name;
@@ -126,34 +85,20 @@ const updateUserProfile = asyncWrapper(async (req, res) => {
 
     if (newPassword) {
       if (await user.matchPassword(enteredPassword)) {
-        const decryptedPrivateKey = decryptText(
-          user.ethaddress.privatekey,
-          enteredPassword,
-        );
-        const newencryptedPrivateKey = encryptText(
-          decryptedPrivateKey,
-          newPassword
-        );
         user.password = newPassword;
-        user.ethaddress.privatekey = newencryptedPrivateKey;
       } else {
         res.status(400).json({ message: "Invalid Old Password" });
         throw new Error("Invalid Old Password");
       }
     }
 
-    // const newPrivateKey = decryptText( user.ethaddress.privatekey, user.password );
-
     const updatedUser = await user.save();
     res.status(200).json({
-      // oldPrivateKey: oldPrivateKey,
-      // newPrivateKey: newPrivateKey,
-      // decryptprivatekey: decryptedPrivateKey,
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
       roles: updatedUser.roles,
-      ethaddress: updatedUser.ethaddress.privatekey,
+      ethaddress: updatedUser.ethaddress,
     });
   } else {
     res.status(404);

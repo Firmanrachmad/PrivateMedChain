@@ -27,7 +27,7 @@ contract Medrec {
     }
 
     modifier senderIsOfficer() {
-        require(msg.sender==officer);
+        require(msg.sender==officer, "Sender is not an officer");
         _;
     }
 
@@ -37,14 +37,14 @@ contract Medrec {
 
 
     function addDoctor(address _doctorAddress) external senderIsOfficer{
-        require(_doctorAddress != address(0));
-        require(!doctors[_doctorAddress]);
+        require(_doctorAddress != address(0), "Doctor Address Null");
+        require(!doctors[_doctorAddress], "Doctor Address Already Exists");
         doctors[_doctorAddress] = true;
     }
 
     function addPatient(address _patientAddress) external senderIsOfficer {
-        require(_patientAddress != address(0));
-        require(!patient[_patientAddress]);
+        require(_patientAddress != address(0), "Patient Address Null");
+        require(!patient[_patientAddress], "Patient Address Already Exists");
         patient[_patientAddress] = true;
     }
 
