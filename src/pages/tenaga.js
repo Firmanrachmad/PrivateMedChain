@@ -79,15 +79,6 @@ function Tenaga() {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
-        // Create contract with signer
-        /*
-          function addDoctor(address _doctorAddress) external senderIsOfficer{
-            require(_doctorAddress != address(0), "Doctor Address Null");
-            require(!doctors[_doctorAddress], "Doctor Address Already Exists");
-            doctors[_doctorAddress] = true;
-          }
-        */
-
         const contract = new ethers.Contract(
           contractAddress,
           MedRec.abi,

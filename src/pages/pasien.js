@@ -77,15 +77,6 @@ function Pasien() {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
-        // Create contract with signer
-        /*
-          function addPatient(address _patientAddress) external senderIsOfficer {
-            require(_patientAddress != address(0), "Patient Address Null");
-            require(!patient[_patientAddress], "Patient Address Already Exists");
-            patient[_patientAddress] = true;
-          } 
-        */
-
         const contract = new ethers.Contract(
           contractAddress,
           MedRec.abi,

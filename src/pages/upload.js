@@ -77,24 +77,12 @@ const Upload = () => {
   };
 
   async function setRecord(hashValue, ethaddress) {
-    // If MetaMask exists
     try {
       if (typeof window.ethereum !== "undefined") {
         await requestAccount();
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-
-        // Create contract with signer
-        /*
-          function addRecord(string memory _hashValue, address _patienAddress) external {
-            require(_patienAddress != address(0));
-            require(patient[_patienAddress]);
-            uint256 _id = _generateId(_patienAddress, msg.sender);
-            _listId[_patienAddress].push(_id);
-            _idToRecord[_id] = Record(_hashValue, _patienAddress, msg.sender, block.timestamp);
-          } 
-        */
 
         const contract = new ethers.Contract(
           contractAddress,
@@ -125,8 +113,8 @@ const Upload = () => {
               </Form.Label>
               <Form.Select
                 aria-label="Default select example"
-                value={ethaddress} // Bind the value of the select to the ethaddress state
-                onChange={(e) => setEthAddress(e.target.value)} // Update ethaddress when an option is selected
+                value={ethaddress} 
+                onChange={(e) => setEthAddress(e.target.value)} 
               >
                 <option value="">Select Patient</option>
                 {users &&
