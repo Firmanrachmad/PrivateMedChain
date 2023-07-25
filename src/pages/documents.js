@@ -43,11 +43,7 @@ function Documents() {
   const decryptFile = async (encryptedId) => {
     setLoading(true);
     try {
-      // console.log(encryptedId);
       const encodedId = encodeURIComponent(encryptedId);
-      // console.log(encodedId);
-      // const decodedId = decodeURIComponent(encodedId);
-      // console.log(decodedId);
       const res = await axios.get(
         `http://localhost:5000/backend/v1/documents/decrypt/${encodedId}`
       );
@@ -59,14 +55,6 @@ function Documents() {
   };
 
   const downloadFile = async (id) => {
-    // if (typeof window.ethereum !== "undefined") {
-    // await requestAccount();
-
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // const signer = provider.getSigner();
-
-    // const contract = new ethers.Contract(textAddress, MedRec.abi, signer);
-
     try {
       console.log(id);
       const res = await axios.get(
@@ -82,7 +70,6 @@ function Documents() {
     } catch (error) {
       console.log(error);
     }
-    // }
   };
 
   return (

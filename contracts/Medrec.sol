@@ -31,10 +31,14 @@ contract Medrec {
         _;
     }
 
+    modifier senderIsAllowed() {
+        require(doctors[msg.sender] || patient[msg.sender] || msg.sender == officer, "Sender is not authorized");
+        _;
+    }
+
     constructor(address _officer) {
         officer = _officer;
     }
-
 
     function addDoctor(address _doctorAddress) external senderIsOfficer{
         require(_doctorAddress != address(0), "Doctor Address Null");
@@ -48,7 +52,7 @@ contract Medrec {
         patient[_patientAddress] = true;
     }
 
-    function addRecord(string memory _hashValue, address _patienAddress) external {
+    function addRecord(string memory _hashValue, address _patienAddress) external senderIsDoctor{
         require(_patienAddress != address(0));
         require(patient[_patienAddress]);
         uint256 _id = _generateId(_patienAddress, msg.sender);
@@ -56,7 +60,7 @@ contract Medrec {
         _idToRecord[_id] = Record(_hashValue, _patienAddress, msg.sender, block.timestamp);
     }
 
-    function getRecordLIst(address _patien) external view returns(uint256[] memory) {
+    function getRecordLIst(address _patien) external view senderIsAllowed returns(uint256[] memory)  {
         return _listId[_patien];
     }
 

@@ -11,19 +11,24 @@ import {
 import { useAllUserMutation } from "../slices/usersApiSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { contractAddress } from "../utils/globalVar";
+import MedRec from "../artifacts/contracts/Medrec.sol/Medrec.json";
+import { ethers } from "ethers";
 
 const Upload = () => {
-  const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
   const [name, setName] = useState("");
   const [users, setUsers] = useState([]);
   const [ethaddress, setEthAddress] = useState("");
-  const [hashvalue, setHashValue] = useState("");
 
   const [alluser] = useAllUserMutation();
-  
+
   const navigate = useNavigate();
+
+  async function requestAccount() {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+  }
 
   const getUsers = async () => {
     setLoading(true);
@@ -42,24 +47,9 @@ const Upload = () => {
     getUsers();
   }, []);
 
-  const getDocuments = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get("http://localhost:5000/backend/v1/documents");
-      setDocuments(res.data.documents);
-      setLoading(false);
-      console.log(res.data.documents);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const addDocuments = async (e) => {
     e.preventDefault();
     try {
-      // console.log(name);
-      // console.log(fileInputRef);
-      // console.log(ethaddress);
       const formData = new FormData();
       formData.append("name", name);
       formData.append("file", fileInputRef.current.files[0]);
@@ -67,31 +57,11 @@ const Upload = () => {
         "http://localhost:5000/backend/v1/documents",
         formData
       );
-      console.log(res);
       const documentId = res.data.document._id;
       encryptFile(documentId);
-      toast.success("Upload Successful!");
-      navigate('/upload');
     } catch (err) {
       toast.error(err?.data?.message || err.error);
       console.log(err.error);
-    }
-  };
-
-  const downloadFile = async (id) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/backend/v1/documents/download/${id}`,
-        { responseType: "blob" }
-      );
-      const blob = new Blob([res.data], { type: res.data.type });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "file";
-      // link.download = res.headers["content-disposition"].split("filename=")[1];
-      link.click();
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -100,15 +70,47 @@ const Upload = () => {
       const res = await axios.post(
         `http://localhost:5000/backend/v1/documents/encrypt/${id}`
       );
-      console.log(res);
+      setRecord(res.data.encryptedId, ethaddress);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    getDocuments();
-  }, []);
+  async function setRecord(hashValue, ethaddress) {
+    // If MetaMask exists
+    try {
+      if (typeof window.ethereum !== "undefined") {
+        await requestAccount();
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        // Create contract with signer
+        /*
+          function addRecord(string memory _hashValue, address _patienAddress) external {
+            require(_patienAddress != address(0));
+            require(patient[_patienAddress]);
+            uint256 _id = _generateId(_patienAddress, msg.sender);
+            _listId[_patienAddress].push(_id);
+            _idToRecord[_id] = Record(_hashValue, _patienAddress, msg.sender, block.timestamp);
+          } 
+        */
+
+        const contract = new ethers.Contract(
+          contractAddress,
+          MedRec.abi,
+          signer
+        );
+        const transaction = await contract.addRecord(hashValue, ethaddress);
+
+        await transaction.wait();
+        toast.success("Document Added to Blockchain");
+        navigate("/upload");
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  }
 
   return (
     <div>
@@ -129,7 +131,7 @@ const Upload = () => {
                 <option value="">Select Patient</option>
                 {users &&
                   users.map((user) => (
-                    <option key={user._id} value={user.ethaddress.address}>
+                    <option key={user._id} value={user.ethaddress}>
                       {user.name}
                     </option>
                   ))}

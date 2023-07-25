@@ -5,7 +5,6 @@ const path = require("path");
 const asyncWrapper = require("../middleware/asyncWrapper");
 const crypto = require("crypto");
 
-
 function encryptText(plainText, publicKeyPEM) {
   const encryptedBuffer = crypto.publicEncrypt(
     {
@@ -43,7 +42,7 @@ const encryptId = asyncWrapper(async (req, res) => {
   const documentId = id;
   const encryptedId = encryptText(documentId, publicKeyPEMs);
   const asymmetric = await Asymmetric.create({ encryptedId });
-  res.status(201).json({ asymmetric });
+  res.status(201).json({ encryptedId });
 });
 
 const decryptId = asyncWrapper(async (req, res) => {
@@ -76,7 +75,6 @@ const getFile = async (req, res) => {
 const addDocuments = asyncWrapper(async (req, res) => {
   const { name } = req.body;
   const file = req.file.path;
-  const { id } = req.params;
   const document = await Document.create({ name, file });
   res.status(201).json({ document });
 });
